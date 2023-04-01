@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="anchor-pane" stylesheets="@../css/TabPane.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxcontrollers.ForumPage">
+   <children>
+      <SplitPane dividerPositions="0.3537946428571429" layoutX="2.0" layoutY="73.0" prefHeight="327.0" prefWidth="600.0" style="-fx-background-color: #d4ebd4;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="73.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="391.0" prefWidth="227.0" style="-fx-background-color: #d4ebd4;">
+               <children>
+                  <ListView fx:id="forumListView" layoutX="6.0" layoutY="25.0" onMouseClicked="#selectForum" prefHeight="189.0" prefWidth="196.0" AnchorPane.bottomAnchor="183.0" AnchorPane.leftAnchor="6.0" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="25.0">
+                     <contextMenu>
+                        <ContextMenu>
+                          <items>
+                            <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+                          </items>
+                        </ContextMenu>
+                     </contextMenu>
+                  </ListView>
+                  <Text layoutX="72.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="FORUMS">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                  </Text>
+                  <Button layoutX="61.0" layoutY="258.0" mnemonicParsing="false" onAction="#createForumButton" style="-fx-background-color: #f2fcfa;" text="Create forum" />
+                  <TextField fx:id="forumTitleField" layoutX="29.0" layoutY="211.0" promptText="Enter Forumn title" />
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: #d4ebd4;" stylesheets="@../css/TabPane.css">
+               <children>
+                  <TreeView fx:id="forumTreeView" layoutX="9.0" layoutY="24.0" onMouseClicked="#commentSelected" prefHeight="156.0" prefWidth="366.0" AnchorPane.topAnchor="24.0" />
+                  <TextArea fx:id="commentField" layoutX="9.0" layoutY="247.0" prefHeight="45.0" prefWidth="366.0" AnchorPane.bottomAnchor="41.0" />
+                  <Button layoutX="146.0" layoutY="363.0" mnemonicParsing="false" onAction="#commentButton" style="-fx-background-color: #f2fcfa;" text="Post comment" AnchorPane.bottomAnchor="9.0" />
+                  <Text layoutX="161.0" layoutY="20.0" strokeType="OUTSIDE" strokeWidth="0.0" text="CONTENT">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                  </Text>
+                  <Text layoutX="161.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="COMMENT">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Text>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+      <ImageView fitHeight="81.0" fitWidth="77.0" layoutX="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/TruckTruckGo.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="141.0" layoutY="20.0" text="WELCOME TO THE CHATROOM" textAlignment="CENTER" textOverrun="CLIP">
+         <font>
+            <Font name="System Bold Italic" size="26.0" />
+         </font>
+         <textFill>
+            <LinearGradient cycleMethod="REFLECT" endX="1.0" endY="1.0">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="0.21225903928279877" green="0.43884557485580444" blue="0.859649121761322" />
+                     </color>
+                  </Stop>
+                  <Stop offset="0.9843400447427292">
+                     <color>
+                        <Color red="0.6014000177383423" green="0.7525805234909058" blue="0.9700000286102295" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="0.3871561586856842" green="0.9649122953414917" blue="0.6760342121124268" />
+                     </color>
+                  </Stop>
+               </stops>
+            </LinearGradient>
+         </textFill>
+      </Label>
+   </children>
+</AnchorPane>
