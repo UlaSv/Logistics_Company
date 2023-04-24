@@ -23,23 +23,25 @@ public class Comment {
     private LocalDate dateModified;
     @ManyToOne
     private Forum parentForum;
-    @ManyToMany
+    @ManyToOne
+    private Comment parentComment;
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Comment> replies;
     @ManyToOne
     private User user;
     private String commentText;
-
-    public Comment(Forum parentForum, User user, String commentText) {
+    public Comment(Forum parentForum, User user, String commentText, Comment parentComment) {
         this.dateCreated = LocalDate.now();
         this.parentForum = parentForum;
+        this.replies = new ArrayList<>();
         this.user = user;
         this.commentText = commentText;
-        replies = new ArrayList<>();
+        this.parentComment = parentComment;
     }
 
     @Override
     public String toString() {
-        return "\"" + commentText + "\" by" + user;
+        return "\"" + commentText + "\" by " + user;
     }
 }

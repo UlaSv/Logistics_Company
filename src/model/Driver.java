@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -23,8 +25,10 @@ public class Driver extends User implements Serializable {
     private LocalDate medicalCheckDate;
     private boolean isOnTheRoad;
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Truck> myOwnedTrucks;
     @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Destination> myDestinations;
 
     public Driver(String login, String password, String name, String surname, LocalDate birthDate, String phoneNumber, String driversLicenceNumber, String emergencyContactPhoneNumber, String medicalInsurance, LocalDate medicalCheckDate) {

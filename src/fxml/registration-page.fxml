@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane prefHeight="400.0" prefWidth="569.0" style="-fx-background-color: #E5F3F4;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxcontrollers.RegistrationPage">
    <children>
@@ -26,12 +27,22 @@
       <RadioButton fx:id="radioDriver" layoutX="411.0" layoutY="31.0" mnemonicParsing="false" onAction="#disableFields" text="Driver" toggleGroup="$userType" />
       <TextField fx:id="emailField" layoutX="269.0" layoutY="72.0" promptText="Email" AnchorPane.leftAnchor="269.0" />
       <DatePicker fx:id="employmentDateField" layoutX="269.0" layoutY="118.0" promptText="Employment date" AnchorPane.leftAnchor="269.0" />
-      <CheckBox fx:id="isAdminField" layoutX="464.0" layoutY="76.0" mnemonicParsing="false" text="Is admin" />
-      <DatePicker fx:id="medDateField" layoutX="257.0" layoutY="197.0" promptText="Med certificate" AnchorPane.leftAnchor="269.0" />
-      <TextField fx:id="medCertField" layoutX="257.0" layoutY="235.0" prefHeight="25.0" prefWidth="149.0" promptText="Med certificate" AnchorPane.leftAnchor="269.0" />
-      <TextField fx:id="driverLicenseField" layoutX="257.0" layoutY="271.0" prefHeight="25.0" prefWidth="149.0" promptText="Driver license" AnchorPane.leftAnchor="269.0" />
-      <TextField fx:id="emergencyPhoneNr" layoutX="269.0" layoutY="308.0" promptText="Emergency phone nr" />
+      <DatePicker fx:id="medDateField" layoutX="269.0" layoutY="234.0" promptText="Med certificate" AnchorPane.leftAnchor="269.0" />
+      <TextField fx:id="medCertField" layoutX="269.0" layoutY="272.0" prefHeight="25.0" prefWidth="149.0" promptText="Med certificate" AnchorPane.leftAnchor="269.0" />
+      <TextField fx:id="driverLicenseField" layoutX="269.0" layoutY="308.0" prefHeight="25.0" prefWidth="149.0" promptText="Driver license" AnchorPane.leftAnchor="269.0" />
+      <TextField fx:id="emergencyPhoneNr" layoutX="269.0" layoutY="345.0" promptText="Emergency phone nr" />
       <PasswordField fx:id="passwordField" layoutX="22.0" layoutY="72.0" promptText="Password" />
       <PasswordField fx:id="repeatPaswField" layoutX="22.0" layoutY="118.0" promptText="Repeat password" />
+      <TitledPane fx:id="adminChoicePane" expanded="false" layoutX="269.0" layoutY="163.0" prefHeight="190.0" prefWidth="175.0" text="Want to be admin?">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="200.0">
+               <children>
+                  <Text layoutX="33.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="For admin priviliges enter admin password:" textAlignment="CENTER" wrappingWidth="107.9406967163086" />
+                  <PasswordField fx:id="adminPasswordField" layoutX="12.0" layoutY="90.0" />
+                  <Button layoutX="64.0" layoutY="125.0" mnemonicParsing="false" onAction="#enterAdminPassword" text="Enter" />
+               </children>
+            </AnchorPane>
+        </content>
+      </TitledPane>
    </children>
 </AnchorPane>

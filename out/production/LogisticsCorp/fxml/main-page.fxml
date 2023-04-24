@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -20,20 +23,21 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #f2fcfa;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxcontrollers.MainPage">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="443.0" prefWidth="610.0" style="-fx-background-color: #f2fcfa;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxcontrollers.MainPage">
    <children>
-      <ToolBar layoutY="3.0" prefHeight="25.0" prefWidth="600.0" styleClass="anchor-pane" stylesheets="@../css/TabPane.css" AnchorPane.topAnchor="0.0">
+      <ToolBar layoutY="3.0" prefHeight="42.0" prefWidth="671.0" styleClass="anchor-pane" stylesheets="@../css/TabPane.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <items>
             <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="31.0" prefWidth="237.0" text="Logistics Company Managment">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>
             </Label>
+            <Button mnemonicParsing="false" onAction="#goToForum" prefHeight="24.0" prefWidth="93.0" style="-fx-background-color: #d4ebd4;" text="Go to forum" />
          </items>
       </ToolBar>
       <TabPane fx:id="tabPane" layoutY="38.0" prefHeight="361.0" prefWidth="600.0" stylesheets="@../css/TabPane.css" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="38.0">
         <tabs>
-            <Tab fx:id="userManagementTab" text="User management">
+            <Tab fx:id="userManagementTab" onSelectionChanged="#userTabPressed" text="User management">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -48,38 +52,35 @@
                               <TableColumn fx:id="dummyField" prefWidth="79.33331298828125" text="action" />
                           </columns>
                         </TableView>
-                        <Button layoutX="257.0" layoutY="282.0" mnemonicParsing="false" onAction="#addNewUser" style="-fx-background-color: #d9e5b4;" text="Add new user" AnchorPane.leftAnchor="257.0" />
+                        <Button layoutX="257.0" layoutY="282.0" mnemonicParsing="false" onAction="#addNewUser" styleClass="add-button" stylesheets="@../css/Buttons.css" text="Add new user" AnchorPane.leftAnchor="257.0" />
                      </children></AnchorPane>
               </content>
             </Tab>
           <Tab onSelectionChanged="#destinationTabPressed" text="Destination management">
                <content>
-                  <SplitPane dividerPositions="0.20055555555555554" prefHeight="160.0" prefWidth="200.0">
+                  <SplitPane fx:id="splitPaneDestination" dividerPositions="0.905464480874317" prefHeight="160.0" prefWidth="200.0">
                     <items>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="339.0" prefWidth="395.0" style="-fx-background-color: #E5F3F4;">
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="329.0" prefWidth="539.0" style="-fx-background-color: #E5F3F4;">
                            <children>
-                              <TableView fx:id="tableOfDestinations" layoutX="119.0" layoutY="49.0" prefHeight="200.0" prefWidth="410.0">
+                              <TableView fx:id="tableOfDestinations" layoutX="20.0" layoutY="58.0" prefHeight="258.0" prefWidth="509.0">
                                 <columns>
                                     <TableColumn fx:id="destinationId" prefWidth="31.333343505859375" text="id" />
                                   <TableColumn fx:id="startCityColumn" prefWidth="67.99996948242188" text="Start" />
                                   <TableColumn fx:id="endCityColumn" prefWidth="60.666748046875" text="End" />
                                     <TableColumn fx:id="driverColumn" prefWidth="74.0" text="Driver" />
                                     <TableColumn fx:id="truckColumn" prefWidth="100.0" text="Truck" />
-                                    <TableColumn fx:id="actionField" prefWidth="76.0" text="Action" />
+                                    <TableColumn fx:id="orderStatusColumn" prefWidth="86.0" text="Status" />
+                                    <TableColumn fx:id="actionField" prefWidth="87.33331298828125" text="Action" />
                                 </columns>
                               </TableView>
-                              <Text layoutX="14.0" layoutY="78.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Table of Current Destinations" wrappingWidth="105.94400787353516">
-                                 <font>
-                                    <Font name="System Bold" size="17.0" />
-                                 </font>
-                              </Text>
+                              <Label fx:id="directionsForDriver" layoutX="168.0" layoutY="23.0" text="Select wanted destination and truck" textAlignment="CENTER" textFill="#0574ff" />
                            </children>
                         </AnchorPane>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="339.0" prefWidth="291.0" style="-fx-background-color: #E5F3F4;">
                            <children>
-                              <Accordion layoutY="7.0" prefHeight="249.0" prefWidth="473.0" style="-fx-background-color: #edf9d7;">
+                              <Accordion layoutY="7.0" prefHeight="249.0" prefWidth="433.0" style="-fx-background-color: #edf9d7;">
                                 <panes>
-                                  <TitledPane animated="false" prefHeight="180.0" prefWidth="457.0" text="Add Start and End city">
+                                  <TitledPane animated="false" onMouseClicked="#refreshChoices" prefHeight="173.0" prefWidth="429.0" text="Add Start and End city">
                                     <content>
                                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="131.0" prefWidth="396.0" style="-fx-background-color: #edf9d7;">
                                              <children>
@@ -124,7 +125,7 @@
                                       <content>
                                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: #edf9d7;">
                                              <children>
-                                                <ListView fx:id="checkpointList" layoutX="34.0" layoutY="28.0" prefHeight="110.0" prefWidth="136.0">
+                                                <ListView fx:id="checkpointList" layoutX="34.0" layoutY="28.0" onMouseClicked="#checkpointSelected" prefHeight="110.0" prefWidth="136.0">
                                                    <contextMenu>
                                                       <ContextMenu>
                                                         <items>
@@ -136,21 +137,23 @@
                                                 <Text layoutX="64.0" layoutY="22.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Checkpoints:" />
                                                 <CheckBox fx:id="longStopCheck" layoutX="227.0" layoutY="33.0" mnemonicParsing="false" text="Long stop" AnchorPane.leftAnchor="215.0" />
                                                 <TextField fx:id="checkpointCityField" layoutX="215.0" layoutY="65.0" promptText="Enter Checkpoint City" AnchorPane.leftAnchor="215.0" />
-                                                <Button layoutX="215.0" layoutY="110.0" mnemonicParsing="false" onAction="#addCheckpointButton" style="-fx-background-color: #d9e5b4;" text="Add checkpoint" AnchorPane.leftAnchor="215.0" />
+                                                <Button fx:id="newCheckpointButton" layoutX="215.0" layoutY="110.0" mnemonicParsing="false" onAction="#addCheckpoint" styleClass="add-button" stylesheets="@../css/Buttons.css" text="Add " AnchorPane.leftAnchor="215.0" />
+                                                <Button fx:id="deleteCheckpointButton" layoutX="354.0" layoutY="110.0" mnemonicParsing="false" onAction="#deleteCheckpoint" styleClass="delete-button" stylesheets="@../css/Buttons.css" text="Delete" />
+                                                <Button fx:id="updateCheckpointButton" layoutX="285.0" layoutY="110.0" mnemonicParsing="false" onAction="#updateCheckpoint" styleClass="update-button" stylesheets="@../css/Buttons.css" text="Update" />
                                              </children>
                                           </AnchorPane>
                                       </content>
                                     </TitledPane>
                                 </panes>
                               </Accordion>
-                              <Button layoutX="175.0" layoutY="288.0" mnemonicParsing="false" onAction="#addDestinationButton" style="-fx-background-color: #d9e5b4;" text="Add new destination" />
+                              <Button layoutX="175.0" layoutY="288.0" mnemonicParsing="false" onAction="#addDestination" styleClass="add-button" stylesheets="@../css/Buttons.css" text="Add new destination" />
                            </children>
                         </AnchorPane>
                     </items>
                   </SplitPane>
                </content>
           </Tab>
-          <Tab onSelectionChanged="#cargoTabPressed" text="Cargo management">
+          <Tab fx:id="cargoManagementTab" onSelectionChanged="#cargoTabPressed" text="Cargo management">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" onMouseClicked="#pressedOnCargoAnchorPane" prefHeight="180.0" prefWidth="200.0" styleClass="tab-pane">
                      <children>
@@ -165,13 +168,13 @@
                         <Text layoutX="242.0" layoutY="116.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose Cargo Type:" />
                         <Text layoutX="423.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Cargo Weight:" />
                         <CheckBox fx:id="isFragileCheck" layoutX="436.0" layoutY="131.0" mnemonicParsing="false" text="Is fragile" />
-                        <Button fx:id="newCargoButton" layoutX="283.0" layoutY="281.0" mnemonicParsing="false" onAction="#addCargo" style="-fx-background-color: #d9e5b4;" text="Add new" />
-                        <Button layoutX="376.0" layoutY="281.0" mnemonicParsing="false" onAction="#updateCargo" style="-fx-background-color: #f7efc0;" text="Update" />
-                        <Button layoutX="462.0" layoutY="281.0" mnemonicParsing="false" onAction="#deleteCargo" style="-fx-background-color: #eea4a7;" text="Delete" />
+                        <Button fx:id="newCargoButton" layoutX="372.0" layoutY="246.0" mnemonicParsing="false" onAction="#addCargo" styleClass="add-button" stylesheets="@../css/Buttons.css" text="Add new" />
+                        <Button fx:id="updateCargoButton" layoutX="344.0" layoutY="281.0" mnemonicParsing="false" onAction="#updateCargo" styleClass="update-button" stylesheets="@../css/Buttons.css" text="Update" />
+                        <Button fx:id="deleteCargoButton" layoutX="411.0" layoutY="281.0" mnemonicParsing="false" onAction="#deleteCargo" styleClass="delete-button" stylesheets="@../css/Buttons.css" text="Delete" />
                      </children></AnchorPane>
             </content>
           </Tab>
-            <Tab onSelectionChanged="#truckTabPressed" text="Truck management">
+            <Tab fx:id="truckManagementTab" onSelectionChanged="#truckTabPressed" text="Truck management">
               <content>
                 <AnchorPane cache="true" minHeight="0.0" minWidth="0.0" onMouseClicked="#pressedOnTruckAnchorPane" prefHeight="180.0" prefWidth="200.0" styleClass="tab-pane">
                      <children>
@@ -180,9 +183,9 @@
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font></Label>
-                        <Button fx:id="newTruckButton" layoutX="283.0" layoutY="281.0" mnemonicParsing="false" onAction="#createTruck" style="-fx-background-color: #d9e5b4;" text="Add new" />
-                        <Button layoutX="376.0" layoutY="281.0" mnemonicParsing="false" onAction="#updateTruck" style="-fx-background-color: #f7efc0;" text="Update" />
-                        <Button layoutX="462.0" layoutY="281.0" mnemonicParsing="false" onAction="#deleteTruck" style="-fx-background-color: #eea4a7;" text="Delete" />
+                        <Button fx:id="newTruckButton" layoutX="283.0" layoutY="281.0" mnemonicParsing="false" onAction="#createTruck" styleClass="add-button" stylesheets="@../css/Buttons.css" text="Add new" />
+                        <Button fx:id="updateTruckButton" layoutX="376.0" layoutY="281.0" mnemonicParsing="false" onAction="#updateTruck" styleClass="update-button" stylesheets="@../css/Buttons.css" text="Update" />
+                        <Button fx:id="deleteTruckButton" layoutX="462.0" layoutY="281.0" mnemonicParsing="false" onAction="#deleteTruck" styleClass="delete-button" stylesheets="@../css/Buttons.css" text="Delete" />
                         <TextField fx:id="modelField" layoutX="226.0" layoutY="50.0" prefHeight="25.0" prefWidth="159.0" promptText="Enter model" AnchorPane.leftAnchor="226.0" />
                         <TextField fx:id="yearOfManufactureField" layoutX="226.0" layoutY="102.0" prefHeight="25.0" prefWidth="159.0" promptText="Enter year of manufacture" AnchorPane.leftAnchor="226.0" />
                         <TextField fx:id="odometerField" layoutX="508.0" layoutY="50.0" prefHeight="25.0" prefWidth="80.0" promptText="km" />
@@ -199,8 +202,23 @@
                   </AnchorPane>
               </content>
             </Tab>
+            <Tab onSelectionChanged="#statisticsTabPressed" text="Statistics">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <BarChart fx:id="destinationChart" layoutX="76.0" layoutY="23.0" prefHeight="327.0" prefWidth="457.0" title="Destination chart">
+                          <xAxis>
+                            <CategoryAxis fx:id="chartCategoryAxis" animated="false" side="BOTTOM" />
+                          </xAxis>
+                          <yAxis>
+                            <NumberAxis fx:id="chartNumberAxis" animated="false" label="Number of destinations" minorTickVisible="false" side="LEFT" tickUnit="1.0" upperBound="20.0" />
+                          </yAxis>
+                        </BarChart>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
         </tabs>
       </TabPane>
-      <Button layoutX="493.0" layoutY="42.0" mnemonicParsing="false" onAction="#goToForum" prefHeight="24.0" prefWidth="93.0" style="-fx-background-color: #d4ebd4;" text="Go to forum" />
    </children>
 </AnchorPane>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ContextMenu?>
 <?import javafx.scene.control.Label?>
@@ -12,15 +13,17 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.paint.LinearGradient?>
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="anchor-pane" stylesheets="@../css/TabPane.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxcontrollers.ForumPage">
+<AnchorPane prefHeight="447.0" prefWidth="600.0" styleClass="anchor-pane" stylesheets="@../css/TabPane.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxcontrollers.ForumPage">
    <children>
-      <SplitPane dividerPositions="0.3537946428571429" layoutX="2.0" layoutY="73.0" prefHeight="327.0" prefWidth="600.0" style="-fx-background-color: #d4ebd4;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="73.0">
+      <SplitPane dividerPositions="0.3537946428571429" layoutX="2.0" layoutY="73.0" prefHeight="373.0" prefWidth="600.0" style="-fx-background-color: #d4ebd4;" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="73.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="391.0" prefWidth="227.0" style="-fx-background-color: #d4ebd4;">
                <children>
@@ -38,15 +41,23 @@
                         <Font name="System Bold" size="15.0" />
                      </font>
                   </Text>
-                  <Button layoutX="61.0" layoutY="258.0" mnemonicParsing="false" onAction="#createForumButton" style="-fx-background-color: #f2fcfa;" text="Create forum" />
                   <TextField fx:id="forumTitleField" layoutX="29.0" layoutY="211.0" promptText="Enter Forumn title" />
+                  <VBox alignment="CENTER" layoutX="53.0" layoutY="248.0" prefHeight="99.0" prefWidth="105.0" spacing="10.0">
+                     <children>
+                        <Button fx:id="createForumButton" mnemonicParsing="false" onAction="#createForum" style="-fx-background-color: #f2fcfa;" text="Create forum" />
+                        <Button fx:id="updateForumButton" mnemonicParsing="false" onAction="#updateForum" styleClass="update-button" stylesheets="@../css/Buttons.css" text="Update forum" />
+                        <Button fx:id="deleteForumButton" mnemonicParsing="false" onAction="#deleteForum" styleClass="delete-button" stylesheets="@../css/Buttons.css" text="Delete forum" />
+                     </children>
+                     <padding>
+                        <Insets left="4.0" />
+                     </padding>
+                  </VBox>
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: #d4ebd4;" stylesheets="@../css/TabPane.css">
                <children>
-                  <TreeView fx:id="forumTreeView" layoutX="9.0" layoutY="24.0" onMouseClicked="#commentSelected" prefHeight="156.0" prefWidth="366.0" AnchorPane.topAnchor="24.0" />
-                  <TextArea fx:id="commentField" layoutX="9.0" layoutY="247.0" prefHeight="45.0" prefWidth="366.0" AnchorPane.bottomAnchor="41.0" />
-                  <Button layoutX="146.0" layoutY="363.0" mnemonicParsing="false" onAction="#commentButton" style="-fx-background-color: #f2fcfa;" text="Post comment" AnchorPane.bottomAnchor="9.0" />
+                  <TreeView fx:id="commentTreeView" layoutX="9.0" layoutY="24.0" onMouseClicked="#commentSelected" prefHeight="163.0" prefWidth="366.0" showRoot="false" styleClass="treeItem" stylesheets="@../css/TreeView.css" AnchorPane.topAnchor="24.0" />
+                  <TextArea fx:id="commentField" layoutX="8.0" layoutY="233.0" prefHeight="45.0" prefWidth="366.0" />
                   <Text layoutX="161.0" layoutY="20.0" strokeType="OUTSIDE" strokeWidth="0.0" text="CONTENT">
                      <font>
                         <Font name="System Bold" size="15.0" />
@@ -57,6 +68,13 @@
                         <Font size="14.0" />
                      </font>
                   </Text>
+                  <Button fx:id="createCommentButton" layoutX="166.0" layoutY="288.0" mnemonicParsing="false" onAction="#createComment" style="-fx-background-color: #f2fcfa;" text="Create" />
+                  <HBox alignment="TOP_CENTER" layoutX="29.0" layoutY="322.0" prefHeight="25.0" prefWidth="325.0" spacing="5.0">
+                     <children>
+                        <Button fx:id="updateCommentButton" mnemonicParsing="false" onAction="#updateComment" styleClass="update-button" stylesheets="@../css/Buttons.css" text="Update " textAlignment="CENTER" />
+                        <Button fx:id="deleteCommentButton" mnemonicParsing="false" onAction="#deleteComment" styleClass="delete-button" stylesheets="@../css/Buttons.css" text="Delete " />
+                     </children>
+                  </HBox>
                </children>
             </AnchorPane>
         </items>

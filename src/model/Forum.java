@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -22,7 +24,8 @@ public class Forum {
     private String title;
     private LocalDate dateCreated;
     private LocalDate dateModified;
-    @OneToMany(mappedBy = "parentForum", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parentForum", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Comment> comments;
     @ManyToOne
     private User user;

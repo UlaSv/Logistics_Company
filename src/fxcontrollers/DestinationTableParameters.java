@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import model.Driver;
+import model.StatusType;
 import model.Truck;
 
 public class DestinationTableParameters {
@@ -13,13 +14,15 @@ public class DestinationTableParameters {
     private SimpleStringProperty endCity = new SimpleStringProperty();
     private ObjectProperty<Driver> driver = new SimpleObjectProperty<>();
     private ObjectProperty<Truck> truck = new SimpleObjectProperty<>();
+    private SimpleObjectProperty<StatusType> orderStatus = new SimpleObjectProperty<>();
 
-    public DestinationTableParameters(SimpleIntegerProperty destinationId, SimpleStringProperty startCity, SimpleStringProperty endCity, ObjectProperty<Driver> driver, ObjectProperty<Truck> truck) {
+    public DestinationTableParameters(SimpleIntegerProperty destinationId, SimpleStringProperty startCity, SimpleStringProperty endCity, ObjectProperty<Driver> driver, ObjectProperty<Truck> truck, SimpleObjectProperty<StatusType> orderStatus) {
         this.destinationId = destinationId;
         this.startCity = startCity;
         this.endCity = endCity;
         this.driver = driver;
         this.truck = truck;
+        this.orderStatus = orderStatus;
     }
 
     public DestinationTableParameters() {
@@ -83,6 +86,18 @@ public class DestinationTableParameters {
 
     public void setTruck(Truck truck) {
         this.truck.set(truck);
+    }
+
+    public StatusType getOrderStatus() {
+        return orderStatus.get();
+    }
+
+    public SimpleObjectProperty<StatusType> orderStatusProperty() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(StatusType orderStatus) {
+        this.orderStatus.set(orderStatus);
     }
     public void setProperty(String propertyName, String newValue) {
         switch (propertyName) {

@@ -1,6 +1,6 @@
 package fxcontrollers;
 
-import hib.UserHibernateController;
+import hib.HibernateController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -52,61 +52,64 @@ public class RegistrationPage implements Initializable {
     @FXML
     public ToggleGroup userType;
     @FXML
-    public CheckBox isAdminField;
-    @FXML
     public TextField emailField;
     @FXML
     public TextField emergencyPhoneNr;
+    @FXML
+    public TitledPane adminChoicePane;
+    @FXML
+    public PasswordField adminPasswordField;
 
     private boolean goingBackToLogin = true;
-
+    private boolean isAdmin = false;
     private EntityManagerFactory entityManagerFactory;
-    private UserHibernateController userHibernateController;
+    private HibernateController hibernateController;
 
     public void setData(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
-        userHibernateController = new UserHibernateController(this.entityManagerFactory);
+        hibernateController = new HibernateController(this.entityManagerFactory);
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        isAdminField.setVisible(false);
         disableFields();
     }
 
     public void disableFields() {
-        if (radioDriver.isSelected()) {
-            //disable stuff
-            emailField.setDisable(true);
-            employmentDateField.setDisable(true);
-            medDateField.setDisable(false);
-            medCertField.setDisable(false);
-            driverLicenseField.setDisable(false);
-            emergencyPhoneNr.setDisable(false);
-        } else if (radioManager.isSelected()) {
-            emailField.setDisable(false);
-            employmentDateField.setDisable(false);
-            medDateField.setDisable(true);
-            medCertField.setDisable(true);
-            driverLicenseField.setDisable(true);
-            emergencyPhoneNr.setDisable(true);
+        if (radioManager.isSelected()) {
+            emailField.setVisible(true);
+            employmentDateField.setVisible(true);
+            medDateField.setVisible(false);
+            medCertField.setVisible(false);
+            driverLicenseField.setVisible(false);
+            emergencyPhoneNr.setVisible(false);
+            adminChoicePane.setVisible(true);
+        } else if (radioDriver.isSelected()) {
+            emailField.setVisible(false);
+            employmentDateField.setVisible(false);
+            medDateField.setVisible(true);
+            medCertField.setVisible(true);
+            driverLicenseField.setVisible(true);
+            emergencyPhoneNr.setVisible(true);
+            adminChoicePane.setVisible(false);
         } else {
-            emailField.setDisable(true);
-            employmentDateField.setDisable(true);
-            medDateField.setDisable(true);
-            medCertField.setDisable(true);
-            driverLicenseField.setDisable(true);
-            emergencyPhoneNr.setDisable(true);
+            emailField.setVisible(false);
+            employmentDateField.setVisible(false);
+            medDateField.setVisible(false);
+            medCertField.setVisible(false);
+            driverLicenseField.setVisible(false);
+            emergencyPhoneNr.setVisible(false);
+            adminChoicePane.setVisible(false);
         }
     }
 
-    public void createUser() throws IOException, SQLException {
+    public void createUser() throws IOException {
         if (fieldIsEmpty()) {
             FxUtils.generateAlert(Alert.AlertType.WARNING, "User registration", "Error", "Please fill all fields");
         } else if (radioManager.isSelected()) {
-            userHibernateController.save(new Manager(loginField.getText(), passwordField.getText(), nameField.getText(), surnameField.getText(), birthdateField.getValue(), phoneField.getText(), emailField.getText(), employmentDateField.getValue(), isAdminField.isSelected()));
+            hibernateController.save(new Manager(loginField.getText(), passwordField.getText(), nameField.getText(), surnameField.getText(), birthdateField.getValue(), phoneField.getText(), emailField.getText(), employmentDateField.getValue(), isAdmin));
         } else if (radioDriver.isSelected()) {
-            userHibernateController.save(new Driver(loginField.getText(), passwordField.getText(), nameField.getText(), surnameField.getText(), birthdateField.getValue(), phoneField.getText(), driverLicenseField.getText(), emergencyPhoneNr.getText(), medCertField.getText(), medDateField.getValue()));
+            hibernateController.save(new Driver(loginField.getText(), passwordField.getText(), nameField.getText(), surnameField.getText(), birthdateField.getValue(), phoneField.getText(), driverLicenseField.getText(), emergencyPhoneNr.getText(), medCertField.getText(), medDateField.getValue()));
         }
         FxUtils.generateAlert(Alert.AlertType.INFORMATION, "User registration", "User created:", "SUCCESSFULLY!");
         isAllowedToGoToLoginPage();
@@ -183,15 +186,21 @@ public class RegistrationPage implements Initializable {
         if (goingBackToLogin)
             returnToLogin();
         else {
-            FXMLLoader fxmlLoader = new FXMLLoader(MainPage.class.getResource("../fxml/main-page.fxml"));
-            MainPage mainPage = fxmlLoader.getController();
-            mainPage.loadUsers();
-            Stage stage = (Stage) loginField.getScene().getWindow();
+            Stage stage = (Stage) nameField.getScene().getWindow();
             stage.close();
         }
     }
 
     public void returnAction() throws IOException {
         isAllowedToGoToLoginPage();
+    }
+
+    public void enterAdminPassword() {
+        if (adminPasswordField.getText().equals("admin")) {
+            isAdmin = true;
+            FxUtils.generateAlert(Alert.AlertType.INFORMATION, "Admin", "You have been granted admin powers", "");
+        } else {
+            FxUtils.generateAlert(Alert.AlertType.INFORMATION, "Admin", "Wrong password", "Try again");
+        }
     }
 }
