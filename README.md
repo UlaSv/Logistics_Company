@@ -17,5 +17,5 @@ This is a university semester project that uses:
 6. Comments
 
 # Current status
-As of now it is a desktop app, soon to be web page
+Final touches are being added to the desktop app.
 
