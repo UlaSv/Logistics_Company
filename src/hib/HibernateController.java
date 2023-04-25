@@ -178,9 +178,13 @@ public class HibernateController {
             Root<Destination> root = cq.from(Destination.class);
             cq.select(cb.count(root));
 
+            cq.where(cb.equal(root.get("status"), StatusType.WAITING_FOR_INFO));
+            Long waitingCount = em.createQuery(cq).getSingleResult();
+            counts.put(StatusType.WAITING_FOR_INFO, waitingCount);
+
             cq.where(cb.equal(root.get("status"), StatusType.READY));
-            Long openCount = em.createQuery(cq).getSingleResult();
-            counts.put(StatusType.READY, openCount);
+            Long readyCount = em.createQuery(cq).getSingleResult();
+            counts.put(StatusType.READY, readyCount);
 
             cq.where(cb.equal(root.get("status"), StatusType.ON_ROAD));
             Long inProgressCount = em.createQuery(cq).getSingleResult();

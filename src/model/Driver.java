@@ -23,11 +23,10 @@ public class Driver extends User implements Serializable {
     private String emergencyContactPhoneNumber;
     private String medicalInsurance;
     private LocalDate medicalCheckDate;
-    private boolean isOnTheRoad;
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "owner", cascade = {CascadeType.DETACH, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Truck> myOwnedTrucks;
-    @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "driver", cascade = {CascadeType.DETACH, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Destination> myDestinations;
 
@@ -43,6 +42,6 @@ public class Driver extends User implements Serializable {
 
     @Override
     public String toString() {
-        return  name + " " + surname;
+        return  name;
     }
 }

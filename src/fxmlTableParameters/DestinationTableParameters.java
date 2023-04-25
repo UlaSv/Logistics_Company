@@ -1,12 +1,15 @@
-package fxcontrollers;
+package fxmlTableParameters;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import model.Cargo;
 import model.Driver;
 import model.StatusType;
 import model.Truck;
+
+import java.util.Calendar;
 
 public class DestinationTableParameters {
     private SimpleIntegerProperty destinationId = new SimpleIntegerProperty();
@@ -14,14 +17,16 @@ public class DestinationTableParameters {
     private SimpleStringProperty endCity = new SimpleStringProperty();
     private ObjectProperty<Driver> driver = new SimpleObjectProperty<>();
     private ObjectProperty<Truck> truck = new SimpleObjectProperty<>();
+    private ObjectProperty<Cargo> cargo = new SimpleObjectProperty<>();
     private SimpleObjectProperty<StatusType> orderStatus = new SimpleObjectProperty<>();
 
-    public DestinationTableParameters(SimpleIntegerProperty destinationId, SimpleStringProperty startCity, SimpleStringProperty endCity, ObjectProperty<Driver> driver, ObjectProperty<Truck> truck, SimpleObjectProperty<StatusType> orderStatus) {
+    public DestinationTableParameters(SimpleIntegerProperty destinationId, SimpleStringProperty startCity, SimpleStringProperty endCity, ObjectProperty<Driver> driver, ObjectProperty<Truck> truck, ObjectProperty<Cargo> cargo, SimpleObjectProperty<StatusType> orderStatus) {
         this.destinationId = destinationId;
         this.startCity = startCity;
         this.endCity = endCity;
         this.driver = driver;
         this.truck = truck;
+        this.cargo = cargo;
         this.orderStatus = orderStatus;
     }
 
@@ -86,6 +91,18 @@ public class DestinationTableParameters {
 
     public void setTruck(Truck truck) {
         this.truck.set(truck);
+    }
+
+    public Cargo getCargo() {
+        return cargo.get();
+    }
+
+    public ObjectProperty<Cargo> cargoProperty() {
+        return cargo;
+    }
+
+    public void setCargo(Cargo cargo) {
+        this.cargo.set(cargo);
     }
 
     public StatusType getOrderStatus() {

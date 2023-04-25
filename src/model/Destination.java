@@ -30,7 +30,6 @@ public class Destination {
     private StatusType status;
     private Date departureDate;
     private Date arrivalDate;
-
     @ManyToOne
     private Driver driver;
     @ManyToMany(mappedBy = "myManagedDestination", cascade = {CascadeType.DETACH, CascadeType.REMOVE})
@@ -75,36 +74,6 @@ public class Destination {
         status = StatusType.WAITING_FOR_INFO;
     }
 
-    public Destination(String startCity, String endCity, long startLn, long startLat, long endLat, long endLn, Date departureDate, Date arrivalDate, List<Manager> responsibleManagers, Cargo cargo, List<Checkpoint> checkpoints, Truck truck) {
-        this.startCity = startCity;
-        this.endCity = endCity;
-        this.startLn = startLn;
-        this.startLat = startLat;
-        this.endLat = endLat;
-        this.endLn = endLn;
-        this.departureDate = departureDate;
-        this.arrivalDate = arrivalDate;
-        this.responsibleManagers = responsibleManagers;
-        this.cargo = cargo;
-        this.checkpoints = checkpoints;
-        this.truck = truck;
-        status = StatusType.WAITING_FOR_INFO;
-    }
-
-    public Destination(String startCity, String endCity, long startLn, long startLat, long endLat, long endLn, Date departureDate, Date arrivalDate, List<Manager> responsibleManagers, Cargo cargo, List<Checkpoint> checkpoints) {
-        this.startCity = startCity;
-        this.endCity = endCity;
-        this.startLn = startLn;
-        this.startLat = startLat;
-        this.endLat = endLat;
-        this.endLn = endLn;
-        this.departureDate = departureDate;
-        this.arrivalDate = arrivalDate;
-        this.responsibleManagers = responsibleManagers;
-        this.cargo = cargo;
-        this.checkpoints = checkpoints;
-        status = StatusType.WAITING_FOR_INFO;
-    }
 
     public void setProperty(String propertyName, String newValue) {
         switch (propertyName) {

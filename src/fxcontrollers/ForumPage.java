@@ -44,15 +44,18 @@ public class ForumPage {
         this.user = user;
         this.entityManagerFactory = entityManagerFactory;
         hibernateController = new HibernateController(this.entityManagerFactory);
-        if (user.getClass() == Manager.class && !((Manager) user).getIsAdmin() || user.getClass() == Manager.class ||user.getClass() == Driver.class)
-            userFunctions();
+        if (user.getClass() == Manager.class && !((Manager) user).getIsAdmin() || user.getClass() == Driver.class) {
+            updateForumButton.setVisible(false);
+            deleteCommentButton.setVisible(false);
+            updateCommentButton.setVisible(false);
+            deleteForumButton.setVisible(false);
+        } else {
+            updateForumButton.setVisible(true);
+            deleteCommentButton.setVisible(true);
+            updateCommentButton.setVisible(true);
+            deleteForumButton.setVisible(true);
+        }
         loadForums();
-    }
-    private void userFunctions() {
-        updateForumButton.setVisible(false);
-        deleteCommentButton.setVisible(false);
-        updateCommentButton.setVisible(false);
-        deleteForumButton.setVisible(false);
     }
 
     public void loadForums() {
@@ -106,6 +109,7 @@ public class ForumPage {
         commentTreeView.setRoot(rootItem);
     }
 
+
     public void createForum() {
         if (forumTitleField.getText().isEmpty()) {
             FxUtils.generateAlert(Alert.AlertType.WARNING, "Forum", "Error", "Please enter forum title");
@@ -135,22 +139,27 @@ public class ForumPage {
     }
 
     public void deleteForum() {
-        Forum forum = hibernateController.getEntityById(Forum.class, selectedForum.getId());
-        List<Comment> commentsToDelete = new ArrayList<>();
-        for (Comment comment : forum.getComments()) {
-            collectCommentsToDelete(comment, commentsToDelete);
+        if (selectedForum != null) {
+            Forum forum = hibernateController.getEntityById(Forum.class, selectedForum.getId());
+            List<Comment> commentsToDelete = new ArrayList<>();
+            for (Comment comment : forum.getComments()) {
+                collectCommentsToDelete(comment, commentsToDelete);
+            }
+            user.getMyForums().remove(forum);
+            user.getMyComments().removeAll(commentsToDelete);
+
+            hibernateController.update(user);
+            hibernateController.delete(forum);
+
+            forumListView.getItems().remove(forum);
+            forumListView.getSelectionModel().clearSelection();
+
+            commentTreeView.setRoot(new TreeItem<>(null));
+            loadForums();
+        } else {
+            FxUtils.generateAlert(Alert.AlertType.WARNING, "Forum", "Please select forum you want to delete", "");
+
         }
-        user.getMyForums().remove(forum);
-        user.getMyComments().removeAll(commentsToDelete);
-
-        hibernateController.update(user);
-        //commentsToDelete.forEach(removeComment -> hibernateController.delete(removeComment));
-        hibernateController.delete(forum);
-
-        forumListView.getItems().remove(forum);
-        forumListView.getSelectionModel().clearSelection();
-
-        commentTreeView.setRoot(new TreeItem<>(null));
     }
 
 
@@ -183,22 +192,22 @@ public class ForumPage {
             comment.setUser(user);
             hibernateController.update(comment);
             commentField.clear();
-            commentTreeView.refresh();
+            populateTreeView(hibernateController.getCommentsForForum(selectedForum.getId()));
         }
     }
 
     public void deleteComment() {
-        Comment comment = selectedComment.getValue();
-        Comment parentComment = comment.getParentComment();
-        if (parentComment != null) {
-            parentComment.getReplies().remove(comment);
+        if (selectedComment != null) {
+            Comment comment = selectedComment.getValue();
+            Comment parentComment = comment.getParentComment();
+            if (parentComment != null) {
+                parentComment.getReplies().remove(comment);
+            }
+            hibernateController.delete(selectedComment.getValue());
+            populateTreeView(hibernateController.getCommentsForForum(selectedForum.getId()));
+        } else {
+            FxUtils.generateAlert(Alert.AlertType.WARNING, "Comment", "Please select the comment you want to delete", "");
         }
-        List<Comment> commentsToDelete = new ArrayList<>();
-        collectCommentsToDelete(comment, commentsToDelete);
-        user.getMyComments().removeAll(commentsToDelete);
-        selectedComment.getParent().getChildren().remove(selectedComment);
-        commentsToDelete.forEach(removeComment -> hibernateController.delete(removeComment));
-        commentTreeView.refresh();
     }
 
     private void collectCommentsToDelete(Comment comment, List<Comment> commentsToDelete) {

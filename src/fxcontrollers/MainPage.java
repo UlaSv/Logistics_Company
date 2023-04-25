@@ -1,5 +1,9 @@
 package fxcontrollers;
 
+import fxmlTableParameters.DestinationTableParameters;
+import fxmlTableParameters.DriverTableParameters;
+import fxmlTableParameters.ManagerTableParameters;
+import fxmlTableParameters.UserTableParameters;
 import hib.HibernateController;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -15,10 +19,8 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.ChoiceBoxTableCell;
-import javafx.scene.control.cell.ComboBoxTableCell;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.control.cell.*;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -29,6 +31,7 @@ import utils.FxUtils;
 import javax.persistence.EntityManagerFactory;
 import java.io.*;
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.*;
 
 public class MainPage implements Initializable {
@@ -57,7 +60,7 @@ public class MainPage implements Initializable {
     @FXML
     public TableView<UserTableParameters> tableOfUsers;
     @FXML
-    public TableColumn<UserTableParameters, Integer> idColumn;
+    public TableColumn<UserTableParameters, Integer> userIdColumn;
     @FXML
     public TableColumn<UserTableParameters, String> loginColumn;
     @FXML
@@ -121,6 +124,8 @@ public class MainPage implements Initializable {
     @FXML
     public TableColumn<DestinationTableParameters, Truck> truckColumn;
     @FXML
+    public TableColumn<DestinationTableParameters, Cargo> cargoColumn;
+    @FXML
     public TableColumn<DestinationTableParameters, StatusType> orderStatusColumn;
     @FXML
     public TableColumn actionField;
@@ -148,6 +153,32 @@ public class MainPage implements Initializable {
     public NumberAxis chartNumberAxis;
     @FXML
     public Label directionsForDriver;
+    @FXML
+    public Label directionsForManager;
+    @FXML
+    public TableView<DriverTableParameters> tableOfDrivers;
+    @FXML
+    public TableColumn<DriverTableParameters, Integer> driverIdColumn;
+    @FXML
+    public TableColumn<DriverTableParameters, String> driversLicenseColumn;
+    @FXML
+    public TableColumn<DriverTableParameters, String> emergencyNrColumn;
+    @FXML
+    public TableColumn<DriverTableParameters, String> medInsuranceColumn;
+    @FXML
+    public TableColumn<DriverTableParameters, LocalDate> medDateColumn;
+    @FXML
+    public TableView<ManagerTableParameters> tableOfManagers;
+    @FXML
+    public TableColumn<ManagerTableParameters, Integer> managerIdColumn;
+    @FXML
+    public TableColumn<ManagerTableParameters, String> emailColumn;
+    @FXML
+    public TableColumn<ManagerTableParameters, LocalDate> employmentDateColumn;
+    @FXML
+    public TableColumn<ManagerTableParameters, Boolean> isAdminColumn;
+    @FXML
+    public Label directionsForAdmin;
 
 
     private User user;
@@ -156,15 +187,19 @@ public class MainPage implements Initializable {
     private Checkpoint selectedCheckpoint;
     private ObservableList<UserTableParameters> observableUsers = FXCollections.observableArrayList();
     private ObservableList<DestinationTableParameters> observableDestinations = FXCollections.observableArrayList();
+    private ObservableList<DriverTableParameters> observableDrivers = FXCollections.observableArrayList();
+    private ObservableList<ManagerTableParameters> observableManagers = FXCollections.observableArrayList();
     private EntityManagerFactory entityManagerFactory;
     private HibernateController hibernateController;
+
 
     public void setInfo(User user, EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
         this.user = user;
         hibernateController = new HibernateController(this.entityManagerFactory);
-        loadInfo(user);
+        disableVisuals();
         loadDestinations();
+        destinationChartInitialize();
     }
 
     public void goToForum() throws IOException {
@@ -181,42 +216,41 @@ public class MainPage implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        responsibleManagerList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         gearboxTypeField.getItems().setAll(GearboxType.values());
         tyreTypeField.getItems().setAll(TyreType.values());
         cargoTypeChoice.getItems().setAll(CargoType.values());
         directionsForDriver.setVisible(false);
+        directionsForManager.setVisible(false);
+        directionsForAdmin.setVisible(false);
         initializeUserTable();
+        initializeDriverTable();
+        initializeManagerTable();
     }
 
     public void initializeUserTable() {
         tableOfUsers.setEditable(true);
-        //Id visible but not editable
-        idColumn.setCellValueFactory(new PropertyValueFactory<>("userId"));
-        //Login visible and editable
+        userIdColumn.setCellValueFactory(new PropertyValueFactory<>("userId"));
         loginColumn.setCellValueFactory(new PropertyValueFactory<>("login"));
         loginColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         loginColumn.setOnEditCommit(
                 t -> handleEditCommit(t, "login")
         );
-        //Password visible and editable
         passwordColumn.setCellValueFactory(new PropertyValueFactory<>("password"));
         passwordColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         passwordColumn.setOnEditCommit(
                 t -> handleEditCommit(t, "password")
         );
-        //Name visible and editable
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         nameColumn.setOnEditCommit(
                 t -> handleEditCommit(t, "name")
         );
-        //Surname visible and editable
         surnameColumn.setCellValueFactory(new PropertyValueFactory<>("surname"));
         surnameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         surnameColumn.setOnEditCommit(
                 t -> handleEditCommit(t, "surname")
         );
-        //Phone number visible and editable
         phoneNrColumn.setCellValueFactory(new PropertyValueFactory<>("phoneNumber"));
         phoneNrColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         phoneNrColumn.setOnEditCommit(
@@ -305,22 +339,23 @@ public class MainPage implements Initializable {
             tabPane.getTabs().remove(truckManagementTab);
             splitPaneDestination.setDividerPositions(1, 1);
             actionField.setVisible(false);
-            tableOfDestinations.setPrefWidth(425);
-            tableOfDestinations.setLayoutX(88);
+            tableOfDestinations.setPrefWidth(500);
+            tableOfDestinations.setLayoutX(40);
             directionsForDriver.setVisible(true);
-        }
-        if (user.getClass() == Manager.class && !((Manager) user).getIsAdmin()) {
-            tableOfUsers.getColumns().remove(actionField);
-        }
-    }
-
-    private void loadInfo(User user) {
-        if (user.getClass() == Driver.class) {
-            disableVisuals();
-        } else if (user.getClass() == Manager.class) {
+            hideNonAdminMethods();
+        } else if (user.getClass() == Manager.class && !((Manager) user).getIsAdmin()) {
+            directionsForManager.setVisible(true);
+            tableOfUsers.getColumns().remove(dummyField);
+            tableOfUsers.setPrefWidth(470);
+            hideNonAdminMethods();
             loadUsers();
+        } else {
+            updateTruckButton.setVisible(true);
+            updateCargoButton.setVisible(true);
+            deleteCargoButton.setVisible(true);
+            deleteTruckButton.setVisible(true);
+            directionsForAdmin.setVisible(true);
         }
-        hideNonAdminMethods();
     }
 
     private void hideNonAdminMethods() {
@@ -492,14 +527,20 @@ public class MainPage implements Initializable {
     public void destinationTabPressed() {
         initializeDestinationTable();
         loadDestinations();
+
     }
 
     public void refreshChoices() {
         List<Manager> managers = hibernateController.getAllRecords(Manager.class);
         ObservableList<Manager> managerList = FXCollections.observableArrayList(managers);
         responsibleManagerList.setItems(managerList);
+        responsibleManagerList.getSelectionModel().clearSelection();
         List<Driver> drivers = hibernateController.getAllRecords(Driver.class);
         responsibleDriver.getItems().setAll(drivers);
+        checkpointList.getItems().clear();
+        responsibleDriver.getSelectionModel().clearSelection();
+        assignedTruck.getSelectionModel().clearSelection();
+        assignedCargo.getSelectionModel().clearSelection();
         freeCargoAndTrucks();
         initializeDestinationTable();
     }
@@ -543,6 +584,9 @@ public class MainPage implements Initializable {
                     truck = hibernateController.getEntityById(Truck.class, assignedTruck.getValue().getId());
                 }
                 List<Manager> managers = new ArrayList<>(responsibleManagerList.getSelectionModel().getSelectedItems());
+                if (user.getClass() == Manager.class && !managers.contains(user)) {
+                    managers.add((Manager) user);
+                }
                 List<Checkpoint> checkpoints = new ArrayList<>(hibernateController.getUnassignedCheckpoints());
                 Cargo cargo = hibernateController.getEntityById(Cargo.class, assignedCargo.getValue().getId());
                 Destination destination = new Destination(
@@ -566,12 +610,18 @@ public class MainPage implements Initializable {
                     }
                     hibernateController.update(driver);
                 }
+                else{
+                    destination.setStatus(StatusType.WAITING_FOR_INFO);
+                }
                 if (truck != null) {
                     truck.setCurrentDestination(destination);
                     if (driver != null) {
                         truck.setOwner(driver);
                     }
                     hibernateController.update(truck);
+                }
+                else{
+                    destination.setStatus(StatusType.WAITING_FOR_INFO);
                 }
                 cargo.setDestination(destination);
                 hibernateController.update(cargo);
@@ -588,9 +638,8 @@ public class MainPage implements Initializable {
                     hibernateController.update(ch);
                 }
                 clearFields(fields, choiceBoxes);
-                tableOfDestinations.getItems().clear();
                 loadDestinations();
-                checkpointList.getItems().clear();
+                refreshChoices();
 
             } catch (NumberFormatException e) {
                 FxUtils.generateAlert(Alert.AlertType.WARNING, "Destination", "Error", "Please enter the correct type of values");
@@ -642,12 +691,16 @@ public class MainPage implements Initializable {
 
     private void initializeDestinationTable() {
         tableOfDestinations.setEditable(true);
+        tableOfDestinations.getSortOrder().add(orderStatusColumn);
+        orderStatusColumn.setSortType(TableColumn.SortType.ASCENDING);
         if (user.getClass() == Driver.class) {
             driverColumn.setEditable(true);
             truckColumn.setEditable(true);
             startCityColumn.setEditable(false);
             endCityColumn.setEditable(false);
+            cargoColumn.setEditable(false);
             orderStatusColumn.setEditable(false);
+
         }
         destinationId.setCellValueFactory(new PropertyValueFactory<>("destinationId"));
 
@@ -714,8 +767,8 @@ public class MainPage implements Initializable {
                 if (orderStatusColumn.getCellData(event.getRowValue()) != StatusType.DONE && orderStatusColumn.getCellData(event.getRowValue()) != StatusType.ON_ROAD) {
                     DestinationTableParameters destination = event.getRowValue();
                     Truck newTruck = event.getNewValue();
+                    Truck oldTruck = event.getOldValue();
                     Destination destinationEntity = hibernateController.getEntityById(Destination.class, destination.getDestinationId());
-                    Truck oldTruck = destinationEntity.getTruck();
                     if (oldTruck != newTruck) {
                         if (oldTruck != null) {
                             oldTruck.setCurrentDestination(null);
@@ -740,6 +793,33 @@ public class MainPage implements Initializable {
                 }
             });
         }
+        cargoColumn.setCellValueFactory(cellData -> {
+            DestinationTableParameters destination = cellData.getValue();
+            Cargo cargo = destination.getCargo();
+            return new SimpleObjectProperty<>(cargo);
+        });
+        List<Cargo> cargo = hibernateController.getAllCargoThatIsNotTaken();
+        if (cargo != null) {
+            cargoColumn.setCellFactory(ChoiceBoxTableCell.forTableColumn((ObservableList<Cargo>) FXCollections.observableArrayList(cargo)));
+            cargoColumn.setOnEditCommit(event -> {
+                if (orderStatusColumn.getCellData(event.getRowValue()) != StatusType.DONE && orderStatusColumn.getCellData(event.getRowValue()) != StatusType.ON_ROAD) {
+                    DestinationTableParameters destination = event.getRowValue();
+                    Cargo newCargo = event.getNewValue();
+                    Cargo oldCargo = event.getOldValue();
+                    Destination rowDestination = hibernateController.getEntityById(Destination.class, destination.getDestinationId());
+                    rowDestination.setCargo(newCargo);
+                    newCargo.setDestination(rowDestination);
+                    oldCargo.setDestination(null);
+                    hibernateController.update(rowDestination);
+                    hibernateController.update(newCargo);
+                    hibernateController.update(oldCargo);
+                }
+                else{
+                    FxUtils.generateAlert(Alert.AlertType.WARNING, "Destination", "No changes are allowed on a finished order.", "");
+                }
+            });
+        }
+
         orderStatusColumn.setCellValueFactory(new PropertyValueFactory<>("orderStatus"));
         orderStatusColumn.setCellFactory(ComboBoxTableCell.forTableColumn(StatusType.values()));
         orderStatusColumn.setOnEditCommit(t -> {
@@ -788,7 +868,7 @@ public class MainPage implements Initializable {
                             setGraphic(null);
                         } else {
                             DestinationTableParameters data = getTableView().getItems().get(getIndex());
-                            if (data.getOrderStatus().equals(StatusType.DONE) ||(data.getOrderStatus().equals(StatusType.ON_ROAD))) {
+                            if (data.getOrderStatus().equals(StatusType.DONE) || (data.getOrderStatus().equals(StatusType.ON_ROAD))) {
                                 setGraphic(null);
                             } else {
                                 setGraphic(button);
@@ -800,7 +880,23 @@ public class MainPage implements Initializable {
             }
         };
         actionField.setCellFactory(cellFactory);
-
+        tableOfDestinations.setRowFactory(tv -> new TableRow<DestinationTableParameters>() {
+            @Override
+            protected void updateItem(DestinationTableParameters item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null || empty) {
+                    setStyle("");
+                } else if (item.getOrderStatus() == StatusType.DONE) {
+                    setStyle("-fx-background-color: #d8ecfd;");
+                } else if (item.getOrderStatus() == StatusType.ON_ROAD) {
+                    setStyle("-fx-background-color: #ddc3d8;");
+                } else if (item.getOrderStatus() == StatusType.WAITING_FOR_INFO) {
+                    setStyle("-fx-background-color: #e3dfd5;");
+                } else if (item.getOrderStatus() == StatusType.READY) {
+                    setStyle("-fx-background-color: #e6f3e6;");
+                }
+            }
+        });
     }
 
 
@@ -815,10 +911,13 @@ public class MainPage implements Initializable {
                 destinationTableParameters.setEndCity(d.getEndCity());
                 destinationTableParameters.setTruck(d.getTruck());
                 destinationTableParameters.setDriver(d.getDriver());
+                destinationTableParameters.setCargo(d.getCargo());
                 destinationTableParameters.setOrderStatus(d.getStatus());
                 observableDestinations.add(destinationTableParameters);
             }
             tableOfDestinations.setItems(observableDestinations);
+            tableOfDestinations.getSortOrder().add(orderStatusColumn);
+            orderStatusColumn.setSortType(TableColumn.SortType.ASCENDING);
         }
     }
 
@@ -920,22 +1019,141 @@ public class MainPage implements Initializable {
         chartCategoryAxis.setLabel("Status Type");
         chartNumberAxis.setLabel("Number of Destinations");
         chartNumberAxis.setTickUnit(1);
-
-
+        loadBarChart();
+    }
+    public void loadBarChart(){
+        destinationChart.getData().clear();
         XYChart.Series<String, Integer> series = new XYChart.Series<>();
         series.setName("Destination Status");
-
         Map<StatusType, Long> statusCounts = hibernateController.getDestinationStatusCounts();
-
         for (StatusType status : StatusType.values()) {
             int count = statusCounts.getOrDefault(status, 0L).intValue();
             series.getData().add(new XYChart.Data<>(status.toString(), count));
         }
-
         destinationChart.getData().add(series);
     }
 
     public void statisticsTabPressed() {
-        destinationChartInitialize();
+        loadBarChart();
+    }
+
+    public void updateUserTable() {
+        initializeUserTable();
+        loadUsers();
+    }
+
+    public void initializeDriverTable() {
+        tableOfDrivers.setEditable(true);
+        driverIdColumn.setCellValueFactory(new PropertyValueFactory<>("driverId"));
+        driversLicenseColumn.setCellValueFactory(new PropertyValueFactory<>("driversLicenceNumber"));
+        driversLicenseColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        driversLicenseColumn.setOnEditCommit(
+                t -> handleDriverEditCommit(t, "driversLicenceNumber")
+        );
+        emergencyNrColumn.setCellValueFactory(new PropertyValueFactory<>("emergencyContactPhoneNumber"));
+        emergencyNrColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        emergencyNrColumn.setOnEditCommit(
+                t -> handleDriverEditCommit(t, "emergencyContactPhoneNumber")
+        );
+        medInsuranceColumn.setCellValueFactory(new PropertyValueFactory<>("medicalInsurance"));
+        medInsuranceColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        medInsuranceColumn.setOnEditCommit(
+                t -> handleDriverEditCommit(t, "medicalInsurance")
+        );
+        medDateColumn.setCellValueFactory(new PropertyValueFactory<>("medicalCheckDate"));
+        //medDateColumn.setCellFactory(DatePicker);
+        medDateColumn.setOnEditCommit(
+                t -> handleDriverEditCommit(t, "medicalCheckDate")
+        );
+    }
+
+    private void handleDriverEditCommit(TableColumn.CellEditEvent<DriverTableParameters, ?> t, String fieldName) {
+        Driver driver = hibernateController.getEntityById(Driver.class, t.getRowValue().getDriverId());
+        if (((Manager) user).getIsAdmin()) {
+            if ("driversLicenceNumber".equals(fieldName)) {
+                driver.setDriversLicenceNumber((String) t.getNewValue());
+            } else if ("emergencyContactPhoneNumber".equals(fieldName)) {
+                driver.setEmergencyContactPhoneNumber((String) t.getNewValue());
+            } else if ("medicalInsurance".equals(fieldName)) {
+                driver.setMedicalInsurance((String) t.getNewValue());
+            } else if ("medicalCheckDate".equals(fieldName)) {
+                LocalDate newDate = ((DatePicker) t.getNewValue()).getValue();
+                driver.setMedicalCheckDate(newDate);
+            }
+            hibernateController.update(driver);
+        } else {
+            FxUtils.generateAlert(Alert.AlertType.ERROR, "", "You are not authorized to edit this user's data.", "");
+            loadDrivers();
+        }
+    }
+
+    public void loadDrivers() {
+        tableOfDrivers.getItems().clear();
+        List<Driver> drivers = hibernateController.getAllRecords(Driver.class);
+        for (Driver driver : drivers) {
+            DriverTableParameters driverTableParameters = new DriverTableParameters();
+            driverTableParameters.setDriverId(driver.getId());
+            driverTableParameters.setDriversLicenceNumber(driver.getDriversLicenceNumber());
+            driverTableParameters.setEmergencyContactPhoneNumber(driver.getEmergencyContactPhoneNumber());
+            driverTableParameters.setMedicalInsurance(driver.getMedicalInsurance());
+            driverTableParameters.setMedicalCheckDate(driver.getMedicalCheckDate());
+            observableDrivers.add(driverTableParameters);
+        }
+        tableOfDrivers.setItems(observableDrivers);
+    }
+
+
+    public void updateDriverTable() {
+        loadDrivers();
+    }
+
+    public void initializeManagerTable() {
+        tableOfManagers.setEditable(true);
+        managerIdColumn.setCellValueFactory(new PropertyValueFactory<>("managerId"));
+        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+        emailColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        emailColumn.setOnEditCommit(
+                t -> handleManagerEditCommit(t, "email")
+        );
+        employmentDateColumn.setCellValueFactory(new PropertyValueFactory<>("employmentDate"));
+        //employmentDateColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        employmentDateColumn.setOnEditCommit(
+                t -> handleManagerEditCommit(t, "employmentDate")
+        );
+        isAdminColumn.setCellValueFactory(new PropertyValueFactory<>("isAdmin"));
+    }
+
+    private void handleManagerEditCommit(TableColumn.CellEditEvent<ManagerTableParameters, ?> t, String fieldName) {
+        Manager manager = hibernateController.getEntityById(Manager.class, t.getRowValue().getManagerId());
+        if (((Manager) user).getIsAdmin() || user.getId() == manager.getId()) {
+            if ("email".equals(fieldName)) {
+                manager.setEmail((String) t.getNewValue());
+            } else if ("employmentDate".equals(fieldName)) {
+                LocalDate newDate = ((DatePicker) t.getNewValue()).getValue();
+                manager.setEmploymentDate(newDate);
+            }
+            hibernateController.update(manager);
+        } else {
+            FxUtils.generateAlert(Alert.AlertType.ERROR, "", "You are not authorized to edit this user's data.", "");
+            loadManagers();
+        }
+    }
+
+    public void loadManagers() {
+        tableOfManagers.getItems().clear();
+        List<Manager> managers = hibernateController.getAllRecords(Manager.class);
+        for (Manager manager : managers) {
+            ManagerTableParameters managerTableParameters = new ManagerTableParameters();
+            managerTableParameters.setManagerId(manager.getId());
+            managerTableParameters.setEmail(manager.getEmail());
+            managerTableParameters.setEmploymentDate(manager.getEmploymentDate());
+            managerTableParameters.setIsAdmin(manager.getIsAdmin());
+            observableManagers.add(managerTableParameters);
+        }
+        tableOfManagers.setItems(observableManagers);
+    }
+
+    public void updateManagerTable() {
+        loadManagers();
     }
 }

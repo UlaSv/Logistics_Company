@@ -25,7 +25,7 @@ public class Comment {
     private Forum parentForum;
     @ManyToOne
     private Comment parentComment;
-    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentComment", cascade = {CascadeType.REMOVE, CascadeType.MERGE}, orphanRemoval = true)
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<Comment> replies;
     @ManyToOne

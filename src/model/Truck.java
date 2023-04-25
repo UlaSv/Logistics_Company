@@ -47,6 +47,6 @@ public class Truck {
 
     @Override
     public String toString() {
-        return "("+model+") "+yearManufactured;
+        return "("+model+") ";
     }
 }

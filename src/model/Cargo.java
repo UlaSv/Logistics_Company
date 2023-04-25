@@ -46,6 +46,9 @@ public class Cargo {
 
     @Override
     public String toString() {
-        return "\"" + title + "\" " + dateRegistered;
+        if (destination == null)
+            return "\"" + title + "\"";
+        else
+            return "\"" + title + "\" taken";
     }
 }
