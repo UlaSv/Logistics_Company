@@ -1,4 +1,5 @@
 # Logistics Company "Truck Truck Go"
+![screenshot](visuals/login_page.png)
 ## About the project
 This is a university semester project that uses:
 1. Hibernate;
@@ -16,6 +17,6 @@ This is a university semester project that uses:
 5. Forums
 6. Comments
 
-# Current status
-Final touches are being added to the desktop app.
-
+# Visuals (more available in the folder)
+![screenshot](visuals/trips_info_page.png)
+![screenshot](visuals/forum_page.png)
